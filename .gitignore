@@ -1,5 +1,6 @@
 # geheimen en lokale data: nooit in git
 .env
+!/.env
 seen.db
 monitor.log*
 overrides.json
