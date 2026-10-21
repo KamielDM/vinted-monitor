@@ -9,7 +9,8 @@ urls = [
   "https://www.vinted.be/catalog?catalog[]=3025&video_game_platform_ids[]=1281",
 ]
 # Seconden tussen polls. Elke poll is ~0,5 MB. Lager = sneller, maar belast Vinted meer (niet onder 10 gaan).
-interval_seconds = 15   # meerdere monitors op één IP: rustig aan
+interval_seconds = 10          # als deze monitor alleen draait
+shared_interval_seconds = 15   # als er meerdere monitors op deze computer draaien (zelfde IP)
 # Nachtstand: tussen deze uren (van, tot) trager zoeken. Er verschijnt dan weinig en je slaapt toch. [] = uit.
 night_hours = [1, 7]
 night_interval_seconds = 60

@@ -8,7 +8,8 @@ urls = [
 ]
 # Titel zegt niet duidelijk dat het een controller is -> beschrijving lezen.
 hints = 'man+et+e|controller|mando|joystick|joypad|controle|comando|gamepad|dual\W*sense'
-interval_seconds = 15   # meerdere monitors op één IP: rustig aan
+interval_seconds = 10          # als deze monitor alleen draait
+shared_interval_seconds = 15   # als er meerdere monitors op deze computer draaien (zelfde IP)
 night_hours = [1, 7]
 night_interval_seconds = 60
 

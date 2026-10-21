@@ -12,7 +12,8 @@ urls = [
 # Titel noemt de reeks maar niet welk deel ("Call of Duty PS5") -> beschrijving lezen om te zien welke game het is.
 hints = 'volant|volante|stuur|lenkrad|wheel|call\W*of\W*duty|\bcod\b|\bark\b|black\W*ops|modern\W*warfare'
 # Seconden tussen polls. Gemeten 20/10: ±4 nieuwe PS5-games per minuut, dus 10 s is ruim genoeg.
-interval_seconds = 15   # meerdere monitors op één IP: rustig aan
+interval_seconds = 10          # als deze monitor alleen draait
+shared_interval_seconds = 15   # als er meerdere monitors op deze computer draaien (zelfde IP)
 night_hours = [1, 7]
 night_interval_seconds = 60
 

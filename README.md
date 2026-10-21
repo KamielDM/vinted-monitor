@@ -58,7 +58,7 @@ Stuur deze commando's naar je bot (typ `/` voor het menu): `/status`, `/pauze`, 
 | `python test_monitor.py` | Zelftest van de filters |
 
 - **Regio**: standaard vinted.be. Andere regio = het domein in `urls` (`config.toml`) aanpassen.
-- **Meerdere monitors tegelijk** mag. Ze delen samen één rustig tempo naar Vinted (minstens 1,5 s tussen verzoeken, elke 15 s pollen) en pauzeren samen bij fouten, zodat je IP-adres niet geblokkeerd raakt.
+- **Tempo**: draait er één monitor, dan kijkt hij elke **10 s**. Draaien er meerdere op dezelfde computer, dan merken ze dat van elkaar en gaan ze elk naar **15 s**, met minstens 1,5 s tussen alle verzoeken samen. Krijgt één monitor fouten, dan pauzeren ze allemaal. Zo raakt je IP-adres niet geblokkeerd (`interval_seconds`, `shared_interval_seconds`).
 - **Automatisch starten**: Win+R → `shell:startup` → maak daar een snelkoppeling naar `start.bat`.
 - De console-monitor gebruikt een klein AI-model (CLIP, ±155 MB) om stockfoto's te herkennen. Het wordt bij de eerste start automatisch gedownload naar `models/`.
 

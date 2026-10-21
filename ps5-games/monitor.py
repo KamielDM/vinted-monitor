@@ -346,6 +346,20 @@ def pause_all(seconds):
     """Alle monitors pauzeren (bv. na time-outs of 429/403 bij één monitor)."""
     shared(lambda st: st.update(pause=max(st["pause"], time.time() + seconds)))
 
+
+def heartbeat(name):
+    """Meld in het gedeelde bestand dat deze monitor draait. Geeft het aantal monitors dat de laatste 60 s actief was."""
+    now, count = time.time(), {}
+
+    def upd(st):
+        act = st.setdefault("active", {})
+        act[name] = now
+        for k in [k for k, t in act.items() if now - t > 60]:
+            del act[k]
+        count["n"] = len(act)
+    shared(upd)
+    return count["n"]
+
 # ---------------------------------------------------------------- Vinted
 
 
@@ -1118,7 +1132,10 @@ class Monitor:
 
     def interval(self):
         s = self.cfg["search"]
-        return s.get("night_interval_seconds", s["interval_seconds"]) if self.is_night() else s["interval_seconds"]
+        if self.is_night():
+            return s.get("night_interval_seconds", s["interval_seconds"])
+        # één monitor: interval_seconds; meerdere op deze computer (zelfde IP): shared_interval_seconds
+        return s["interval_seconds"] if heartbeat(str(ROOT)) <= 1 else s.get("shared_interval_seconds", 15)
 
     def alert(self, text):
         try:
