@@ -65,7 +65,7 @@ assert not first_hit(m.scam, "Geen PayPal, alleen via Vinted", True)
 m.db = sqlite3.connect(":memory:")
 m.db.execute("CREATE TABLE items (id, user_id, status, reason, seen_at)")
 m.db.execute("INSERT INTO items VALUES (1, 11, 'excluded', 'scamwoord in beschrijving: ''paypal''', ?)", (time.time(),))
-assert m.seller_blocked(11) and not m.seller_blocked(99)
+assert m.seller_blocked(11) and m.seller_blocked(267624708) and not m.seller_blocked(99)
 # 21/10: getal in een gamenaam is geen bulk, tijdschrift is geen game, PS2/PSP = oud platform
 assert bulk_count("fc27 jeux") == 0 and bulk_count("fifa 22 jeu ps5") == 0 and bulk_count("lot de 4 jeux") == 4
 assert m.quick_filter(item("Magazine Vintage Gamestop GTA 5 2013", 10))

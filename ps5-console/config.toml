@@ -34,7 +34,7 @@ max_reposts = 2
 # Verkopers (gebruikers-ID) die altijd overgeslagen worden. Daarnaast blokkeert de monitor zelf elke verkoper die de
 # laatste 30 dagen als scammer werd uitgesloten (scamwoord, scam-review, herplaatsen, te lage prijs).
 blocked_sellers = [
-  # gebruikers-ID's die je nooit wilt zien
+  267624708,   # 'verkocht' dezelfde Slim 4x in 3 dagen (17-19/10)
 ]
 # Verkopers met minder reviews overslaan (1 = geen advertenties van accounts zonder reviews; 0 = uit).
 min_reviews = 1

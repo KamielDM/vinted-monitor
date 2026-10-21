@@ -22,7 +22,7 @@ def item(title, price):
 for t in ["Pagamento solo PayPal con beni e Servizi", "betaling via PAY-PAL", "p4ypal ok", "IBAN: BE12...",
           "virement bancaire", "Bankoverschrijving graag", "contact me on WhatsApp", "Überweisung möglich",
           "mail me naam@example.com", "bel 0470 00 00 00", "+32 470 00 00 00", "betalen buiten Vinted",
-          "en perfecto estado pago solo por trasferencia envio por vinted",  # typfout, advertentie <advertentie>
+          "en perfecto estado pago solo por trasferencia envio por vinted",  # typfout, advertentie 10379087867
           "betaling uitsluitend via bankoverschrijving", "pago por transferencias"]:
     assert first_hit(scam, t), t
 # lekken gevonden in de opgeslagen beschrijvingen (18/10)
@@ -33,7 +33,7 @@ for t in ["Accetto solo PayPaI", "scrivetemi su wz 351 234 5678 non perdite di t
     assert first_hit(scam, t), t
 for t in ["Acquistata il 03.10.2025, 825 GB, firmware 12.40", "Prezzo 1 300 €", "PS5 CFI-2016 1TB", "IBAN nee, enkel Vinted"[5:]]:
     assert not first_hit(scam, t), (t, first_hit(scam, t))
-# weigert betaling via Vinted (19/10, advertentie <advertentie>)
+# weigert betaling via Vinted (19/10, advertentie 10439195340)
 for t in ["❗Ich akzeptiere keine Zahlungen über das System❗", "ik accepteer geen betaling via dit systeem",
           "PAS DE PAIEMENT VIA VINTED", "no acepto el pago por vinted", "No pagamenti tramite wallet Vinted",
           "I don't accept payment through the app", "Leggi bio per info"]:
@@ -112,7 +112,7 @@ assert detect_model("Ps5 Slim Disco 1TB + Dualsense") == ("slim", "disc")
 assert detect_model("PS5 Slim Digital Edition") == ("slim", "digital")
 # fat-signalen (18/10): "Standard/Normal" in de titel en 825 GB; Slim in de titel gaat voor
 assert detect_model("Ps5 standard + controller", "PlayStation 5 Standard con lettore disco, venduta per passaggio al "
-                    "modello Slim.") == (None, "disc")   # <advertentie>: onbekend (jij kijkt), niet Slim
+                    "modello Slim.") == (None, "disc")   # 10412250860: onbekend (jij kijkt), niet Slim
 assert detect_model("Ps5 normal")[0] is None and detect_model("PlayStation 5 - 825gb")[0] == "original"  # standard/normal = onbekend
 assert detect_model("PlayStation 5 Standard – 1 To – Neuve, jamais ouverte")[0] == "slim"   # winkelnaam van de Slim
 assert detect_model("Playstation 5 Standard", "- stockage : 1 To")[0] == "slim"
@@ -166,7 +166,7 @@ assert hamming(h1, h2) <= 5, hamming(h1, h2)
 assert hamming(h1, h3) > 10, hamming(h1, h3)
 
 assert m.quick_filter(item("PlayStation portable édition limitée 30th anniversary", 300))   # = Portal (echt geval)
-assert m.quick_filter(item("Ps5 portable", 200))                          # = Portal (<advertentie>)
+assert m.quick_filter(item("Ps5 portable", 200))                          # = Portal (10380216798)
 assert m.quick_filter(item("PS5 portatile come nuova", 190))
 
 # beschrijving
@@ -186,7 +186,7 @@ assert m.domestic_only("Envoi uniquement en France et Belgique", {"country_code"
 assert m.domestic_only("Envoi rapide partout en Europe", {"country_code": "FR"}) is None
 assert m.domestic_only("Garanzia Italia, spedizione veloce", {"country_code": "IT"}) is None
 
-# reviews van de verkoper (echte teksten van een verkoper, 14/10/2026)
+# reviews van de verkoper (echte teksten van leonardo20141, 14/10/2026)
 from monitor import review_check
 warn = [(w, compile_rule(w)) for w in cfg["rules"]["review_warnings"]]
 NOW = dt.datetime(2026, 10, 14, 17, 15, tzinfo=dt.timezone.utc)
@@ -272,7 +272,7 @@ c.db.executemany("INSERT INTO items VALUES (?,?,?,?,?)", [
     (1, 11, "excluded", "scamwoord in beschrijving: 'paypal'", _time.time()),
     (2, 12, "excluded", "vertrouwensscore 30 < 40: nog geen reviews", _time.time()),   # lage score = geen blokkade
     (3, 13, "excluded", "herplaatst: 3e keer dezelfde advertentie", _time.time() - 40 * 86400)])  # te lang geleden
-assert c.seller_blocked(11)
+assert c.seller_blocked(267624708) and c.seller_blocked(11)
 assert not c.seller_blocked(12) and not c.seller_blocked(13) and not c.seller_blocked(99)
 # eerlijke verkopers: scamwoord met ontkenning ervoor telt niet (wel in dezelfde zin, niet na een komma)
 for t in ["Geen PayPal, alleen via Vinted", "pas de virement, paiement uniquement via Vinted", "Kein PayPal!",

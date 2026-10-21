@@ -35,7 +35,7 @@ bulk_max_per_game = 0
 bulk_max_total = 0
 max_reposts = 2
 blocked_sellers = [
-  # gebruikers-ID's die je nooit wilt zien
+  267624708,   # console-scammer (17-19/10)
 ]
 min_reviews = 1
 min_trust_score = 40
