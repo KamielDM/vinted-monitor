@@ -1,0 +1,11 @@
+# geheimen en lokale data: nooit in git
+.env
+seen.db
+monitor.log*
+overrides.json
+beschrijvingen.md
+Gekocht/
+__pycache__/
+models/
+vinted_verkeer.json
+vinted_verkeer.lock

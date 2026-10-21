@@ -1,0 +1,191 @@
+# Vinted PS5 Monitor - instellingen. Pas aan en herstart de monitor.
+# Geheimen (Telegram token/chat id) staan NIET hier maar in .env
+
+[search]
+# Plak hier een of meer Vinted-zoek-URL's (kopieer ze uit je browser). De regio volgt uit het domein
+# (vinted.be, vinted.nl, vinted.fr, ...). order=newest_first wordt automatisch toegevoegd.
+# Standaard: categorie Consoles (3025) + platform PlayStation 5 (1281). Vangt ook titels zonder "PS5".
+urls = [
+  "https://www.vinted.be/catalog?catalog[]=3025&video_game_platform_ids[]=1281",
+]
+# Seconden tussen polls. Elke poll is ~0,5 MB. Lager = sneller, maar belast Vinted meer (niet onder 10 gaan).
+interval_seconds = 15   # meerdere monitors op één IP: rustig aan
+# Nachtstand: tussen deze uren (van, tot) trager zoeken. Er verschijnt dan weinig en je slaapt toch. [] = uit.
+night_hours = [1, 7]
+night_interval_seconds = 60
+
+[filters]
+min_price = 150          # filtert losse accessoires/games eruit
+max_price = 500
+# Optioneel per model een eigen maximum (overschrijft max_price):
+max_price_per_model = { pro = 650 }
+# Welke modellen/edities wil je? Mogelijk: "slim", "pro", "original" (de eerste, dikke "fat") en "disc", "digital".
+models = ["slim", "pro"]
+editions = ["disc"]
+# Deze modellen mogen elke editie (een Pro wordt standaard zonder lezer verkocht; die koop je los bij).
+any_edition = ["pro"]
+# Advertentie zonder vermeld model (bv. enkel "Playstation 5"): true = melden met "❓ Model niet vermeld", jij kijkt
+# op de foto's; false = overslaan. Alleen wat er echt staat (Digital, fat, 825 GB, Pro/Slim) wordt gefilterd.
+# Een onbekende editie (disc/digital niet vermeld) komt ook door; de melding toont dan "PS5 Slim" zonder "Disc".
+unknown_model = true
+# Zet een verkoper dezelfde advertentie (zelfde titel of foto) steeds opnieuw online, dan vanaf de
+# 3e keer in 7 dagen niet meer melden (verwijderen + herplaatsen is een typisch scampatroon).
+max_reposts = 2
+# Verkopers (gebruikers-ID) die altijd overgeslagen worden. Daarnaast blokkeert de monitor zelf elke verkoper die de
+# laatste 30 dagen als scammer werd uitgesloten (scamwoord, scam-review, herplaatsen, te lage prijs).
+blocked_sellers = [
+  # gebruikers-ID's die je nooit wilt zien
+]
+# Verkopers met minder reviews overslaan (1 = geen advertenties van accounts zonder reviews; 0 = uit).
+min_reviews = 1
+# Onder deze score geen melding (0-100, zie README voor de berekening).
+min_trust_score = 40
+# Onder deze score komt de melding stil binnen (geen geluid/trilling), zodat alleen betrouwbare deals je storen.
+silent_below = 40
+# Prijs onder dit bedrag = te mooi om waar te zijn -> overslaan (gemeten 19/10: Pro's van €200-360 en Slims van €150
+# die doorkwamen, waren scams; echte verkopen lagen op Pro €450-650, Slim €250+).
+suspicious_price = { default = 200, pro = 400 }
+
+[vision]
+# Fotocheck met CLIP (lokaal, gratis, ±155 MB model in ../models). Draait pas ná de melding, alleen voor
+# gemelde advertenties, en werkt de melding dan bij. Herkent officiële productfoto's (stockfoto's).
+enabled = true
+stock_threshold = 0.5   # gemeten 14/10: officiële Sony-foto's 0,67-0,73, echte advertentiefoto's max 0,30
+# Engelse beschrijvingen; "stock" is wat telt, de rest zijn afleiders zodat tv-schermen en close-ups
+# niet als stockfoto gezien worden. Voor een ander product: deze zinnen aanpassen.
+[vision.labels]
+stock = "an official product photo of a game console isolated on a white background"
+console = "a photo of a PlayStation 5 game console in a room"
+box = "a photo of a cardboard PlayStation 5 retail box"
+controller = "a close-up photo of a game controller"
+tv = "a photo of a television screen showing a video game"
+closeup = "a close-up photo of a white plastic surface"
+screenshot = "a screenshot of a website, chat or receipt with text"
+
+[rules]
+# Woorden worden hoofdletter-, accent- en spatie-ongevoelig gezocht: "paypal" vangt ook
+# "PayPal", "pay pal", "P.a.y.p.a.l", "p4ypal". Losse woorden van 10+ letters mogen 1 typfout hebben
+# ("transferencia" vangt "trasferencia"). Scamwoorden gelden ook voor de verkopersbio. Begin met "re:" voor een eigen regex.
+
+# In titel + beschrijving -> uitsluiten (externe betaling / contact buiten Vinted)
+scam = [
+  "paypal", "iban", "bank transfer", "banktransfer", "wire transfer", "overschrijving", "bankoverschrijving",
+  "virement", "bonifico", "postepay", "ricarica", "uberweisung", "bankuberweisung", "sofortuberweisung",
+  "vorkasse", "transferencia", "bizum",
+  "western union", "moneygram", "revolut", "wise transfer", "payconiq", "lydia", "crypto", "bitcoin",
+  "friends and family", "amici e parenti", "beni e servizi",
+  "hors vinted", "en dehors de vinted", "sans passer par vinted", "buiten vinted", "zonder vinted",
+  "outside vinted", "fuori vinted", "fuera de vinted", "ausserhalb von vinted",
+  "whatsapp", "whats app", "wa.me", "telegram", "whatzap", "whatzzap", "watsap", "watsapp", "wsp",
+  "instagram", "insta", "istangram", "snapchat", "snap", 're:👻',   # 👻 = Snapchat-naam ("👻 voorbeeld.123")
+  "no vinted", "pas via vinted", "pas par vinted", "nicht uber vinted", "nicht uber das vinted", "solo per vetrina",
+  "spedisco privatamente", "spedizione privata", "echtzeit", "vorher zahlung", "zahlung vorab", "send the money",
+  "send money", "refunder",
+  # "eerst contact opnemen vóór je koopt" = gesprek buiten Vinted willen trekken
+  "prima di acquistare", "prima dell'acquisto", "contattatemi prima", "bevor sie es kaufen", "vor dem kauf",
+  "zuerst anschreiben", "vorher anschreiben", "avant d'acheter", "avant tout achat", "contact me before",
+  "before buying", "antes de comprar", "voordat je koopt",
+  # je koopt alleen een foto van een PS5
+  "impresa en papel", "imagen impresa", "photo imprimee", "foto stampata", "solo la foto", "nur das bild",
+  "picture only", "only the picture", "alleen de foto",
+  # contactgegevens in de bio
+  "leggi bio", "leggi la bio", "guarda in bio", "guarda la bio", "voir bio", "voir ma bio", "check bio", "check my bio",
+  "mira mi bio", "siehe bio", "zie bio",
+  # 20/10: varianten uit de opgeslagen advertenties
+  "systemverkauf", "kein vinted kauf", "vor der zahlung", "bevor sie auf", "avant achat", "contacter avant",
+  "antes de hacer la compra", "non spediamo tramite vinted", "non spedisco tramite vinted", "no hago envios por vinted",
+  "kein versand uber vinted", "pas d'envoi via vinted", "pas d'envoi par vinted",
+  "wallet vinted", "vinted wallet", "portefeuille vinted", "porte monnaie vinted", "portafoglio vinted", "monedero vinted",
+  "paiement en prive", "paiement en mp", "pagamento in privato", "pago por privado", "zahlung privat", "passer prive",
+  "passer en prive", "payment directly", "pay directly", "non leggo i messaggi", "non leggiamo i messaggi", "leggo solo su",
+  "je ne lis pas les messages", "me estafaron", "malas experiencias", "trop eu de litige",
+  're:https?://\S+',                     # links in beschrijving of bio
+  're:(?i)\b(?:at|a|à|auf|op|por)\s*(?:1|un|one|uno|einen)\s*(?:€|euro)\b',  # "I'll put the play at one euro"
+  # weigert betaling via Vinted: ontkenning + betalen + systeem/Vinted/app in dezelfde zin, behalve "alleen via Vinted"
+  # ("Ich akzeptiere keine Zahlungen über das System", "PAS DE PAIEMENT VIA VINTED", "no acepto el pago por vinted")
+  're:(?i)(?:\b(keine?[nr]?|nicht|ohne|geen|niet|nooit|no|non|pas|sans|sin|not|never|jamais|nunca|mai|don\x27?t|do not)\b(?:(?!uniquement|seulement|solo|solamente|only|nur|alleen|enkel|unicamente|exclusivement|esclusivamente)[^.!?\n]){0,40}\b(zahlung|bezahl|betaling|betaal|betalen|paiement|payer|pagament|pagar|pago|payment|pay)|\b(keine?[nr]?|nicht|ohne|geen|niet|nooit|no|non|pas|sans|sin|not|never|jamais|nunca|mai|don\x27?t|do not)\b[^.!?\n,]{0,15}\b(kauf|verkauf|achat|vente|vendit[ae]|venta|compra|acquist|buy|purchase|sale|koop|verkoop))\w*(?:(?!uniquement|seulement|solo|solamente|only|nur|alleen|enkel|unicamente|exclusivement|esclusivamente)[^.!?\n]){0,40}\b(system\w*|syst[eè]me|systeem|sistema|vinted|app|applicazione|application|aplicaci[oó]n|plattform|plateforme|piattaforma|plataforma|platform|site|sito|sitio|seite|website)\b(?!\W*(uniquement|seulement|solo|solamente|only|nur|alleen|enkel|unicamente|exclusivement|esclusivamente)\b)',
+  're:[\w.+-]+@[\w-]+\.[a-z]{2,}',          # e-mailadres
+  're:(?:\+|00)\d[\d .-]{7,}\d',            # internationaal telefoonnummer
+  're:(?<![\d,.€])(?:\d[ .-]{0,2}){8,}\d(?![\d€])',  # telefoonnummer: 9+ cijfers, ook 351--23--45--678 (datums en 825 GB tellen niet)
+]
+
+# Alleen in de titel -> uitsluiten (geen (werkende) console). Losse accessoires vallen al weg via min_price.
+title = [
+  "portal", "portable", "portatile", "portatil", "remote player", "vr2", "psvr", "playstation vr",  # portable = Portal
+  "boite vide", "boite seule", "lege doos", "alleen doos", "enkel doos", "empty box", "box only",
+  "scatola vuota", "solo scatola", "caja vacia", "solo caja", "leerer karton", "nur karton", "nur ovp",
+  "manette seule", "controller only", "alleen controller", "enkel controller",
+  "kapot", "defect", "defekt", "en panne", "hs", "pour pieces", "for parts", "guasta", "rota", "averiada",
+  "banni", "banned", "gesperrt", "bannata", "baneada", "probleme psn", "ban psn",   # geblokkeerd op PSN
+  "cerco", "compro", "recherche", "je cherche", "cherche", "busco", "suche", "looking for", "gezocht", "zoek",  # kopers
+  "portale", "procuro", "concours", "tirage au sort", "giveaway", "gewinnspiel", "sorteo", "concorso",  # Portal, kopers, wedstrijden
+  "bio",   # "Ps5 usata (bio)", "leggi bio": contactgegevens staan in de bio
+  're:(?i)\b(vendu|venduto|vendido|verkauft|verkocht|sold)\W*$',   # "Ps5 vendu" (alleen aan het einde van de titel)
+]
+
+# Waarschuwingen in reviews van de verkoper (alleen reviews met 3★ of minder; ook de scamwoorden hierboven tellen).
+# Recente review (< 90 dagen) met zo'n woord -> overslaan.
+review_warnings = [
+  "scam", "scammer", "scammeur", "scameur", "arnaque", "arnaqueur", "escroc", "escroquerie", "ne pas acheter",
+  "n'achetez pas", "betrug", "betruger", "nicht kaufen", "truffa", "truffatore", "truffatori", "non comprate",
+  "non comprare", "estafa", "estafador", "no comprar", "no compreis", "oplichter", "oplichting", "niet kopen",
+  "fraud", "fraude", "fake", "do not buy", "dont buy", "don't buy",
+]
+
+# Alleen afhalen (titel of beschrijving) -> overslaan. Vinted's eigen "alleen afhalen"-instelling telt ook.
+pickup_only = [
+  "alleen afhalen", "enkel afhalen", "uitsluitend afhalen", "alleen ophalen", "enkel ophalen",
+  "geen verzending", "niet verzenden", "wordt niet verzonden",
+  "uniquement en main propre", "seulement en main propre", "main propre uniquement", "pas d'envoi", "aucun envoi",
+  "solo ritiro", "solo consegna a mano", "solo a mano", "no spedizione", "niente spedizione", "non spedisco",
+  "nur abholung", "nur selbstabholung", "kein versand", "nur fur selbstabholer",
+  "solo recogida", "solo en mano", "no envio", "no hago envios",
+  "pickup only", "pick up only", "collection only", "no shipping", "scambio a mano", "bitte abholen", "trato en persona",
+]
+# Verzendt alleen binnen het eigen land (titel of beschrijving) -> overslaan,
+# behalve als de verkoper in België woont of de tekst België noemt ("France et Belgique").
+domestic_only = [
+  "alleen binnen nederland", "enkel binnen nederland", "alleen in nederland", "alleen nederland", "enkel nederland",
+  "niet naar het buitenland", "geen verzending naar het buitenland", "niet internationaal", "geen internationale verzending",
+  "envoi en france uniquement", "envoi uniquement en france", "uniquement en france", "seulement en france",
+  "france uniquement", "uniquement france", "france metropolitaine uniquement", "envoi france seulement",
+  "pas d'envoi a l'etranger", "pas d'envoi a l'international", "pas d'envoi international", "pas a l'etranger",
+  "pas a l'international", "national uniquement", "uniquement national",
+  "solo italia", "solo in italia", "spedisco solo in italia", "spedizione solo in italia", "solo territorio italiano",
+  "no estero", "non spedisco all'estero", "niente estero", "no spedizioni all'estero", "no spedizioni estere",
+  "nur innerhalb deutschlands", "nur deutschland", "nur in deutschland", "versand nur innerhalb deutschlands",
+  "nur inland", "nur innerhalb von deutschland", "kein versand ins ausland", "nicht ins ausland", "kein auslandsversand",
+  "solo espana", "solo en espana", "solo envios a espana", "solo peninsula", "solo envio nacional",
+  "no envio al extranjero", "no envio fuera de espana", "no envios internacionales",
+  "so portugal", "apenas portugal", "apenas para portugal", "so envio para portugal", "nao envio para o estrangeiro",
+  "solo vendo en espana", "vendo solo en espana",
+  "domestic only", "no international shipping", "no international", "ship only within", "uk only", "inland only",
+]
+
+# Haast of geldnood (titel of beschrijving) -> 20 punten aftrek. Komt vaak voor bij scams ("nuova mai aperta urgente, a causa
+# di un incidente ... ho bisogno di soldi"), maar ook bij eerlijke verkopers, dus geen uitsluiting.
+pressure = [
+  "urgent", "urgente", "urgentemente", "urgence", "en urgence", "vente urgente", "urge", "me urge", "dringend",
+  "besoin d'argent", "besoin de cette somme", "bisogno di soldi", "necesito el dinero", "brauche das geld", "need money",
+  "geld nodig", "liquider", "muss weg", "muss unbedingt", "solo hoy", "demain soir", "incidente",
+]
+
+# Afhalen vermeld (zonder "alleen") -> wel melden, maar gemarkeerd met 📍
+# Niet (meer) te koop: verkocht, gereserveerd of "niet kopen" (titel of beschrijving) -> overslaan
+unavailable = [
+  "ne pas acheter", "non comprare", "non acquistare", "nicht kaufen", "niet kopen", "no comprar", "do not buy",
+  "dont buy", "fausse annonce", "annonce de prevention",
+  "reserve a", "reserve pour", "riservata a", "riservato a", "reservado para", "reserviert fur", "gereserveerd voor",
+]
+
+pickup = [
+  "afhalen", "ophalen", "main propre", "a recuperer", "ritiro", "consegna a mano", "en mano", "recogida",
+  "abholung", "abholen", "selbstabholung", "pick up", "pickup",
+]
+
+# Andere consoles: alleen uitsluiten als de titel GEEN PS5 vermeldt (dus "PS5 + PS4-games" mag wel)
+other_platforms = [
+  "ps4", "ps3", "ps2", "ps1", "psp", "vita", "playstation 4", "playstation 3", "playstation 2",
+  "xbox", "switch", "nintendo", "3ds", "ds lite", "wii", "game boy", "gameboy", "gba", "gamecube",
+  "sega", "megadrive", "atari", "steam deck",
+]
