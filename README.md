@@ -44,6 +44,10 @@ Wordt een gemelde advertentie verkocht of krijgt de verkoper een scam-review, da
 
 Bij de eerste start worden de huidige advertenties als "gezien" gemarkeerd, zodat je niet tientallen meldingen tegelijk krijgt.
 
+## Updaten
+
+Download de nieuwste versie (of `git pull`) en zet je eigen `.env`, `seen.db` en eventuele aanpassingen in `config.toml` terug. Die bestanden worden nooit overschreven door git.
+
 ## Bediening vanaf je telefoon
 
 Stuur deze commando's naar je bot (typ `/` voor het menu): `/status`, `/pauze`, `/hervat`, `/prijzen`, `/gemiddelde`, `/min`, `/score`, `/reset`. De console-monitor heeft ook `/max` en `/maxpro`.
